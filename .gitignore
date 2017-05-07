@@ -1,0 +1,8 @@
+.cache/
+.eggs/
+/*.egg-info/
+/dist/
+/build/
+
+/pytestdebug.log
+MNIST_data/

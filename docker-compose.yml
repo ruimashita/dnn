@@ -1,0 +1,32 @@
+version: '2'
+services:
+  base:
+    build:
+      context: ./
+      dockerfile: dockerfiles/Dockerfile
+
+  tensorflow:
+    extends: base
+
+  development:
+    extends: base
+    network_mode: "host"
+    working_dir: /home
+    volumes:
+      - ./:/home
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.Xauthority:/root/.Xauthority:rw
+    environment:
+      DISPLAY: $DISPLAY
+    environment:
+      PYTHONPATH: /home
+
+  test:
+    extends: base
+    command: python3 setup.py test
+
+  tensorboard:
+    extends: base
+    command: tensorboard --logdir /home/tmp/tensorboard
+    ports:
+      - "6006:6006"
