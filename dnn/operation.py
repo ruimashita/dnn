@@ -18,8 +18,22 @@ class OperationMeta(type):
     def check_forward(func):
         """Check forward() parameters."""
         def func_wrapper(self, *inputs):
+            for _input in inputs:
+                # TODO(wakisaka): numpy
+                assert isinstance(_input, np.ndarray)
+
             logger.debug("forward func wrapper: %s %s %s", self, func, inputs)
-            return func(self, *inputs)
+            outputs = func(self, *inputs)
+
+            if isinstance(outputs, (tuple, list)):
+                for output in outputs:
+                    # TODO(wakisaka): numpy
+                    assert isinstance(output, (np.ndarray,))
+            else:
+                # TODO(wakisaka): numpy
+                assert isinstance(_input, (np.ndarray, ))
+
+            return outputs
         return func_wrapper
 
     @staticmethod
@@ -27,6 +41,7 @@ class OperationMeta(type):
         """Check backward() parameters"""
         def func_wrapper(self, grad_outputs):
             if isinstance(grad_outputs, np.ndarray):
+                # TODO(wakisaka): numpy
                 assert isinstance(self.outputs, np.ndarray)
                 assert self.outputs.shape == grad_outputs.shape
 
@@ -46,6 +61,7 @@ class OperationMeta(type):
                 self, func, grad_outputs, self.outputs, self.inputs, grad_inputs
             )
 
+            # TODO(wakisaka): numpy
             if isinstance(grad_inputs, np.ndarray):
                 assert isinstance(grad_inputs, np.ndarray)
                 assert grad_inputs.shape == self.inputs.shape
@@ -87,14 +103,14 @@ class OperationMeta(type):
     def __new__(cls, cls_name, cls_bases, cls_dict):
         # wrap forward()
         if "forward" not in cls_dict:
-            logger.error("no forward")
+            raise NotImplementedError("{}.forward() not implemented ".format(cls_name))
         forward_func = cls_dict["forward"]
         forward_func = OperationMeta.check_forward(forward_func)
         cls_dict["forward"] = forward_func
 
         # wrap backward()
         if "backward" not in cls_dict:
-            logger.error("no backward")
+            raise NotImplementedError("{}.backward() not implemented ".format(cls_name))
         backward_func = cls_dict["backward"]
         backward_func = OperationMeta.check_backward(backward_func)
         backward_func = OperationMeta.cast_from_tensor_to_data(backward_func)
@@ -146,7 +162,7 @@ class Operation(metaclass=OperationMeta):
         return tensor_outputs
 
     def forward(self, *inputs):
-        pass
+        raise NotImplementedError()
 
     def backward(self, grad_outputs):
         """Backward.
@@ -154,11 +170,11 @@ class Operation(metaclass=OperationMeta):
         Params:
         grad_outputs: gradients of outputs. list of Tensor or a Tensor.
         """
-        pass
+        raise NotImplementedError()
 
 
 def unbroadcast(grad, data):
-    """Unbroadcast grad to data's shape.
+    """Unbroadcast grad from grad`s shape to data's shape.
 
     https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
     """
