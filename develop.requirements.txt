@@ -1,5 +1,12 @@
 -r requirements.txt
+-r test.requirements.txt
 
-ipdb
-colorlog
+# docs
+Sphinx==1.6.1
+sphinx-rtd-theme==0.2.4
+recommonmark==0.4.0
 
+# development
+Pillow==4.1.1
+colorlog==2.10.0
+ipdb==0.10.3

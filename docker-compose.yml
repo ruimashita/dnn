@@ -5,11 +5,14 @@ services:
       context: ./
       dockerfile: dockerfiles/Dockerfile
 
-  tensorflow:
+  production:
     extends: base
 
   development:
     extends: base
+    build:
+      context: ./
+      dockerfile: dockerfiles/development.Dockerfile
     network_mode: "host"
     working_dir: /home
     volumes:
@@ -23,10 +26,17 @@ services:
 
   test:
     extends: base
+    build:
+      context: ./
+      dockerfile: dockerfiles/development.Dockerfile
     command: python3 setup.py test
 
-  tensorboard:
+  build-docs:
     extends: base
-    command: tensorboard --logdir /home/tmp/tensorboard
-    ports:
-      - "6006:6006"
+    build:
+      context: ./
+      dockerfile: dockerfiles/development.Dockerfile
+    working_dir: /home/docs/source
+    command: make html
+    volumes:
+      - ./:/home

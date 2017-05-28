@@ -3,6 +3,11 @@
 /*.egg-info/
 /dist/
 /build/
+__pycache__/
+
 
 /pytestdebug.log
 MNIST_data/
+/.coverage
+
+/docs/_build/

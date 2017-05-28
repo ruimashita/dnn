@@ -14,8 +14,8 @@ setup(
     author_email='takuya.wakisaka@moldweorp.com',
     url='https://github.com/ruimashita/dnn',
     license="",
-    packages=find_packages(exclude=('tests', 'deprecated')),
+    packages=find_packages(exclude=('tests',)),
     install_requires=requirements,
-    setup_requires=['pytest-runner', ],
+    setup_requires=['pytest-runner'],
     tests_require=['pytest', ],
 )
