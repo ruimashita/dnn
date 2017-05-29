@@ -22,6 +22,21 @@ def relu(x):
     return Relu()(x)
 
 
+class Sigmoid(Operation):
+
+    def forward(self, x):
+        # TODO(wakisaka): numpy
+        return 1 / (1 + np.exp(-x))
+
+    def backward(self, grad_outputs):
+        derivative = self.outputs * (1 - self.outputs)
+        return grad_outputs * derivative,
+
+
+def sigmoid(x):
+    return Sigmoid()(x)
+
+
 class Softmax(Operation):
     def __init__(self, axis=1):
         self.axis = axis
