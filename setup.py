@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
-from pip.download import PipSession
 
-requirements = [str(req.req) for req in parse_requirements("requirements.txt", session=PipSession())]
+install_requires = ["numpy >= 1.12", 'scipy>=0.19', 'mnist', 'scikit-learn>=0.18']
 
 setup(
     name='dnn',
@@ -15,7 +13,7 @@ setup(
     url='https://github.com/ruimashita/dnn',
     license="",
     packages=find_packages(exclude=('tests',)),
-    install_requires=requirements,
+    install_requires=install_requires,
     setup_requires=['pytest-runner'],
     tests_require=['pytest', ],
 )

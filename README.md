@@ -6,32 +6,48 @@
 # DNN
 
 Automatic differentiation deep neural network framework.
+
+## Getting Started
+
 python >= 3.5.
 
+### Installing
 
-## install
+Please upgrade pip before installing.
 ```
 $ pip install -U pip setuptools
-$ pip install -r /tmp/requirements.txt
-$ python setup.py install
+```
+
+There are two ways to install.
+
+* git clone & install
+```
+$ git clone https://github.com/ruimashita/dnn.git
+$ cd dnn
+$ pip install .
+```
+
+* install from github
+```
+$ pip install git+https://github.com/ruimashita/dnn.git
 ```
 
 
-## example
+### Example
 ```
 $ python examples/mnist_softmax.py
 $ python examples/iris_mlp.py
 ```
 
 
-## test
+## Test
 
 ```
 $ docker-compose -p dnn run --rm test
 ```
 
 
-## build docs
+## Build docs
 
 ```
 $ docker-compose -p dnn build build-docs

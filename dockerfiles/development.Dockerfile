@@ -33,11 +33,10 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /tmp/requirements.txt
 COPY test.requirements.txt /tmp/test.requirements.txt
 COPY develop.requirements.txt /tmp/develop.requirements.txt
 RUN pip install -r /tmp/develop.requirements.txt
 
 COPY ./ /home
 WORKDIR /home
-CMD python setup.py install
+CMD pip install -e .

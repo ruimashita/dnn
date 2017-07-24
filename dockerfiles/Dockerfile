@@ -17,9 +17,6 @@ RUN ln -s /usr/bin/pip3 /usr/bin/pip
 
 RUN pip install -U pip setuptools
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
-
 COPY ./ /home
 WORKDIR /home
-RUN python setup.py install
+RUN pip install .

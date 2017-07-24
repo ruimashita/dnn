@@ -29,7 +29,7 @@ services:
     build:
       context: ./
       dockerfile: dockerfiles/development.Dockerfile
-    command: python3 setup.py test
+    command: python -m pytest --cov=./dnn tests/dnn_tests
 
   build-docs:
     extends: base
