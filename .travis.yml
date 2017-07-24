@@ -15,7 +15,7 @@ env:
 before_install:
   # install docker
   - sudo apt-get update
-  - sudo apt-get -y -q -o Dpkg::Options::="--force-confnew" install docker-engine
+  - sudo apt-get -y -q -o Dpkg::Options::="--force-confnew" install docker-ce
 
   # install docker compose
   - sudo rm /usr/local/bin/docker-compose
