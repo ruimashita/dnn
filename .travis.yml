@@ -31,7 +31,7 @@ install:
 
 script:
   - flake8
-  - python install .
+  - pip install .
   - python -m pytest --cov=./dnn tests/dnn_tests
 
   # - docker-compose build
