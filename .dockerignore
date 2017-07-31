@@ -4,6 +4,7 @@
 /dist/
 /build/
 __pycache__/
+/.tox/
 
 /pytestdebug.log
 MNIST_data/

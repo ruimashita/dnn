@@ -27,12 +27,10 @@ cache:
   pip
 
 install:
-  - pip install -r test.requirements.txt
+  - pip install -r tox tox-travis
 
 script:
-  - flake8
-  - pip install .
-  - python -m pytest --cov=./dnn tests/dnn_tests
+  - tox
 
   # - docker-compose build
   # - docker-compose run test

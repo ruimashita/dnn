@@ -3,5 +3,6 @@ tensorflow==1.1.0
 pytest==3.0.7
 pytest-cov==2.5.1
 flake8==3.3.0
+tox==2.7.0
 codecov
 codeclimate-test-reporter
