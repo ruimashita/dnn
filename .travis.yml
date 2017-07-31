@@ -27,7 +27,7 @@ cache:
   pip
 
 install:
-  - pip install -r tox tox-travis
+  - pip install tox tox-travis
 
 script:
   - tox
