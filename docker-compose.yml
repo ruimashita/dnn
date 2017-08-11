@@ -29,8 +29,7 @@ services:
     build:
       context: ./
       dockerfile: dockerfiles/test.Dockerfile
-    # command: python -m pytest --cov=./dnn tests/dnn_tests
-    command: tox    
+    command: tox
 
   build-docs:
     extends: base
