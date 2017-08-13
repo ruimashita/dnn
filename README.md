@@ -43,6 +43,7 @@ $ python examples/iris_mlp.py
 ## Test
 
 ```
+$ docker-compose -p dnn build test
 $ docker-compose -p dnn run --rm test
 ```
 
