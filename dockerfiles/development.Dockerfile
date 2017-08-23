@@ -39,4 +39,4 @@ RUN pip install -r /tmp/develop.requirements.txt
 
 COPY ./ /home
 WORKDIR /home
-CMD pip install -e .
+RUN pip install -e .
