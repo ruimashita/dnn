@@ -49,14 +49,16 @@ def mnist_data(mode="train"):
 
 
 def mnist_softmax():
-    train_mnist_batch = mnist_data("train")
+    np.random.seed(seed=615)
+    train_mnist = mnist_data("train")
+    train_mnist_batch = train_mnist(batch_size=200)
 
-    weights = Variable(np.zeros([784, 10]))
-    biases = Variable(np.zeros([10]))
+    weights = Variable(np.random.normal(size=(784, 10)))
+    biases = Variable(np.random.normal(size=(10)))
 
-    optimizer = Adam(0.001)
+    optimizer = Adam(0.01)
     for step in range(100):
-        images_data, labels_data = next(train_mnist_batch(batch_size=200))
+        images_data, labels_data = next(train_mnist_batch)
 
         images = Tensor(images_data, name="datas")
         labels = Tensor(labels_data, name="labels")

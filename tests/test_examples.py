@@ -13,7 +13,10 @@ class TestMnistSoftmax(unittest.TestCase):
 
     @staticmethod
     def tensorflow_mnist_softmax():
-        train_mnist_batch = mnist_data("train")
+        np.random.seed(seed=615)
+
+        train_mnist = mnist_data("train")
+        train_mnist_batch = train_mnist(batch_size=200)
 
         graph = tf.Graph()
 
@@ -21,13 +24,13 @@ class TestMnistSoftmax(unittest.TestCase):
             images = tf.placeholder(tf.float32, [None, 784])
             labels = tf.placeholder(tf.float32, [None, 10])
 
-            weights = tf.Variable(tf.zeros([784, 10]))
-            biases = tf.Variable(tf.zeros([10]))
+            weights = tf.Variable(initial_value=np.random.normal(size=(784, 10)), dtype=tf.float32)
+            biases = tf.Variable(initial_value=np.random.normal(size=(10)), dtype=tf.float32)
             output = tf.nn.softmax(tf.matmul(images, weights) + biases)
             cross_entropy = tf.reduce_mean(
                 -tf.reduce_sum(labels * tf.log(output), reduction_indices=[1])
             )
-            train_step = tf.train.AdamOptimizer(0.001).minimize(cross_entropy)
+            train_step = tf.train.AdamOptimizer(0.01).minimize(cross_entropy)
 
             correct_prediction = tf.equal(tf.argmax(output, 1), tf.argmax(labels, 1))
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -36,7 +39,7 @@ class TestMnistSoftmax(unittest.TestCase):
         sess = tf.Session(graph=graph)
         sess.run(init)
         for step in range(100):
-            images_data, labels_data = next(train_mnist_batch(batch_size=200))
+            images_data, labels_data = next(train_mnist_batch)
             _, accuracy_value = sess.run([train_step, accuracy], feed_dict={images: images_data, labels: labels_data})
             print("step: {}, train accuracy: {}".format(step, accuracy_value))
         return accuracy_value
