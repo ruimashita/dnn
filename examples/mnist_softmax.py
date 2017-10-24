@@ -1,27 +1,59 @@
 # -*- coding: utf-8 -*-
-import tempfile
-import numpy as np
 import os
+import gzip
+import struct
+import urllib.request
 
-import mnist as mnist_loader
+import numpy as np
 
 from dnn.tensor import Tensor, Variable
 from dnn import operations as ops
 from dnn.optimizer import Adam
 
+_MNIST_URL = "http://yann.lecun.com/exdb/mnist/"
+
+_TRAIN_IMAGE_FILE = "train-images-idx3-ubyte.gz"
+_TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz"
+_TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz"
+_TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz"
+
+_DATA_DIR = os.path.join("data", "MNIST", "dir")
+
+
+def _maybe_download_and_parse(filename):
+    target_file = os.path.join(_DATA_DIR, filename)
+    download_url = _MNIST_URL + filename
+
+    if not os.path.exists(_DATA_DIR):
+        os.makedirs(_DATA_DIR)
+
+    if not os.path.exists(target_file):
+        urllib.request.urlretrieve(download_url, target_file)
+
+    with gzip.open(target_file) as f:
+        if "images" in filename:
+            header, num, rows, cols = struct.unpack(">4i", f.read(16))
+            size = num * rows * cols
+            data = struct.unpack("{}B".format(size), f.read(size))
+            data = np.array(data, dtype=np.uint8).reshape(num, rows, cols)
+
+        if "labels" in filename:
+            header, num = struct.unpack(">2i", f.read(8))
+            data = struct.unpack("{}B".format(num), f.read(num))
+            data = np.array(data, dtype=np.uint8)
+
+    return data
+
 
 def mnist_data(mode="train"):
     print("load {} mnist...".format(mode))
-    tempfile.tempdir = "./MNIST_data"
-    if not os.path.exists(tempfile.tempdir):
-        os.mkdir(tempfile.tempdir)
     if mode == "train":
-        images = mnist_loader.train_images()
-        labels = mnist_loader.train_labels()
+        images = _maybe_download_and_parse(_TRAIN_IMAGE_FILE)
+        labels = _maybe_download_and_parse(_TRAIN_LABEL_FILE)
     else:
-        images = mnist_loader.test_images()
-        labels = mnist_loader.test_labels()
-    tempfile.tempdir = None
+        images = _maybe_download_and_parse(_TEST_IMAGE_FILE)
+        labels = _maybe_download_and_parse(_TEST_LABEL_FILE)
+
     print("done")
 
     assert len(images) == len(labels)

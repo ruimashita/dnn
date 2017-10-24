@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-install_requires = ["numpy >= 1.12", 'scipy>=0.19', 'mnist', 'scikit-learn>=0.18']
+install_requires = ["numpy >= 1.12", 'scipy>=0.19', 'scikit-learn>=0.18']
 
 setup(
     name='dnn',
