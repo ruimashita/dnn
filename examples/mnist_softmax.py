@@ -10,22 +10,22 @@ from dnn.tensor import Tensor, Variable
 from dnn import operations as ops
 from dnn.optimizer import Adam
 
-_MNIST_URL = "http://yann.lecun.com/exdb/mnist/"
+MNIST_URL = "http://yann.lecun.com/exdb/mnist/"
 
-_TRAIN_IMAGE_FILE = "train-images-idx3-ubyte.gz"
-_TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz"
-_TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz"
-_TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz"
+TRAIN_IMAGE_FILE = "train-images-idx3-ubyte.gz"
+TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz"
+TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz"
+TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz"
 
-_DATA_DIR = os.path.join("data", "MNIST", "dir")
+DATA_DIR = os.path.join("data", "MNIST")
 
 
 def _maybe_download_and_parse(filename):
-    target_file = os.path.join(_DATA_DIR, filename)
-    download_url = _MNIST_URL + filename
+    target_file = os.path.join(DATA_DIR, filename)
+    download_url = MNIST_URL + filename
 
-    if not os.path.exists(_DATA_DIR):
-        os.makedirs(_DATA_DIR)
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
 
     if not os.path.exists(target_file):
         urllib.request.urlretrieve(download_url, target_file)
@@ -48,11 +48,11 @@ def _maybe_download_and_parse(filename):
 def mnist_data(mode="train"):
     print("load {} mnist...".format(mode))
     if mode == "train":
-        images = _maybe_download_and_parse(_TRAIN_IMAGE_FILE)
-        labels = _maybe_download_and_parse(_TRAIN_LABEL_FILE)
+        images = _maybe_download_and_parse(TRAIN_IMAGE_FILE)
+        labels = _maybe_download_and_parse(TRAIN_LABEL_FILE)
     else:
-        images = _maybe_download_and_parse(_TEST_IMAGE_FILE)
-        labels = _maybe_download_and_parse(_TEST_LABEL_FILE)
+        images = _maybe_download_and_parse(TEST_IMAGE_FILE)
+        labels = _maybe_download_and_parse(TEST_LABEL_FILE)
 
     print("done")
 
