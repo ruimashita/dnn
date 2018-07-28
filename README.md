@@ -48,7 +48,13 @@ $ docker-compose -p dnn run --rm test
 ```
 
 
-## Build docs
+## Docs
+
+API Docs: [https://dnn.netlify.com/](https://dnn.netlify.com/)
+
+
+### Manually build docs
+
 
 ```
 $ docker-compose -p dnn build build-docs
