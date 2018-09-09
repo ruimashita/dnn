@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import unittest
-import math
-
 import numpy as np
 
 from dnn.operations.convolution import Convolution2DIM2COL, Convolution2DNaive
