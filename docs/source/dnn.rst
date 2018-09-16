@@ -1,11 +1,6 @@
 dnn package
 ===========
 
-.. automodule:: dnn
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 
@@ -57,3 +52,10 @@ dnn\.test module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: dnn
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -61,3 +61,8 @@ $ docker-compose -p dnn build build-docs
 $ docker-compose -p dnn run --rm build-docs
 ```
 
+
+### Override current docs.
+```
+$ docker-compose -p dnn run --rm build-docs sphinx-apidoc -f -o ./ ../../dnn/
+```
