@@ -202,5 +202,52 @@ class Convolution2DNaive(Convolution2DBase, Operation):
         return grad_x, grad_kernel
 
 
+class Convolution2DKN2ROW(Convolution2DBase, Operation):
+
+    def forward(self, x, kernel):
+        """
+
+        x.shape -> batch, input_channel, height, width.
+        kernel.shape -> output_channel, input_channel, kernel_height, kernel_width.
+        """
+        batch = x.shape[0]
+        input_h = x.shape[2]
+        input_w = x.shape[3]
+        out_c = kernel.shape[0]
+        kernel_h = kernel.shape[2]
+        kernel_w = kernel.shape[3]
+        out_h = 1 + ((input_h + 2 * self.pad_h - kernel_h) // self.stride_y)
+        out_w = 1 + ((input_w + 2 * self.pad_w - kernel_w) // self.stride_x)
+
+        # zero padding
+        x = np.pad(
+            x,
+            ((0, 0),
+             (0, 0),
+             (self.pad_h, self.pad_h + self.stride_y - 1),
+             (self.pad_w, self.pad_w + self.stride_x - 1)),
+            mode='constant',
+            constant_values=(0,))
+
+        # 1x1 convolution
+        # tmp.shape -> (batch, input_height+pad, input_widht+pad, out_channel, kernel_h, kernel_w)
+        tmp = np.tensordot(
+            x, kernel, ((1, ), (1, )))
+
+        out = np.zeros((batch, out_c, out_h, out_w))
+        for h in range(out_h):
+            for w in range(out_w):
+                stride_h = h * self.stride_y
+                stride_w = w * self.stride_x
+                for k_h in range(kernel_h):
+                    for k_w in range(kernel_w):
+                        out[:, :, h, w] += tmp[:, stride_h+k_h, stride_w+k_w, :, k_h, k_w]
+
+        return out
+
+    def backward(self, grad_outputs):
+        pass
+
+
 def convolution2d(x, stride=1, pad=0):
     return Convolution2DNaive(stride=stride, pad=pad)(x)

@@ -1,15 +1,42 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from dnn.operations.convolution import Convolution2DIM2COL, Convolution2DNaive
+from dnn.operations.convolution import (
+    Convolution2DIM2COL, Convolution2DNaive,
+    Convolution2DKN2ROW
+)
 from dnn.test import check_gradients
 
 
-def test_convolution2d_im2col():
-    input_shape = (2, 5, 7, 7)  # b, h, w, c
+def test_compare_convolution2d():
+    input_shape = (2, 5, 7, 7)  # b, c, h, w
     input_data = np.random.rand(*input_shape)
 
-    kernel_shape = (6, 5, 3, 3)  # out_c, h, w, in_c,
+    kernel_shape = (6, 5, 3, 3)  # out_c, in_c, h, w,
+    kernel_data = np.random.rand(*kernel_shape)
+
+    pad = 1
+    stride = 2
+
+    naive = Convolution2DNaive(pad=pad, stride=stride)
+    naive_output = naive(input_data, kernel_data)
+
+    kn2row = Convolution2DKN2ROW(pad=pad, stride=stride)
+    kn2row_output = kn2row(input_data, kernel_data)
+
+    assert np.allclose(naive_output.data, kn2row_output.data)
+
+    im2col = Convolution2DIM2COL(pad=pad, stride=stride)
+    im2col_output = im2col(input_data, kernel_data)
+
+    assert np.allclose(naive_output.data, im2col_output.data)
+
+
+def test_convolution2d_im2col():
+    input_shape = (2, 5, 7, 7)  # b, c, h, w
+    input_data = np.random.rand(*input_shape)
+
+    kernel_shape = (6, 5, 3, 3)  # out_c, in_c, h, w,
     kernel_data = np.random.rand(*kernel_shape)
 
     op = Convolution2DIM2COL(pad=1, stride=2)
@@ -21,10 +48,10 @@ def test_convolution2d_im2col():
 
 
 def test_convolution2d_naive():
-    input_shape = (2, 5, 7, 7)  # b, h, w, c
+    input_shape = (2, 5, 7, 7)  # b, c, h, w
     input_data = np.random.rand(*input_shape)
 
-    kernel_shape = (6, 5, 3, 3)  # out_c, h, w, in_c,
+    kernel_shape = (6, 5, 3, 3)  # out_c, in_c, h, w,
     kernel_data = np.random.rand(*kernel_shape)
 
     op = Convolution2DNaive(pad=1, stride=1)
@@ -36,5 +63,6 @@ def test_convolution2d_naive():
 
 
 if __name__ == '__main__':
-    test_convolution2d_im2col()
-    test_convolution2d_naive()
+    test_compare_convolution2d()
+    # test_convolution2d_im2col()
+    # test_convolution2d_naive()
