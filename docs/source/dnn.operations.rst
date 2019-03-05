@@ -1,11 +1,6 @@
 dnn\.operations package
 =======================
 
-.. automodule:: dnn.operations
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Submodules
 ----------
 
@@ -13,6 +8,14 @@ dnn\.operations\.activation module
 ----------------------------------
 
 .. automodule:: dnn.operations.activation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+dnn\.operations\.convolution module
+-----------------------------------
+
+.. automodule:: dnn.operations.convolution
     :members:
     :undoc-members:
     :show-inheritance:
@@ -34,3 +37,10 @@ dnn\.operations\.math module
     :show-inheritance:
 
 
+Module contents
+---------------
+
+.. automodule:: dnn.operations
+    :members:
+    :undoc-members:
+    :show-inheritance:
