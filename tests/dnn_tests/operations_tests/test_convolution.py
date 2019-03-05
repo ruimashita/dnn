@@ -16,20 +16,21 @@ def test_compare_convolution2d():
     kernel_data = np.random.rand(*kernel_shape)
 
     pad = 1
-    stride = 4
+    stride = 3
+    dilation = 2
 
-    naive = Convolution2D_Naive(pad=pad, stride=stride)
+    naive = Convolution2D_Naive(pad=pad, stride=stride, dilation=dilation)
     naive_output = naive(input_data, kernel_data)
 
-    kn2row = Convolution2D_KN2ROW(pad=pad, stride=stride)
+    kn2row = Convolution2D_KN2ROW(pad=pad, stride=stride, dilation=dilation)
     kn2row_output = kn2row(input_data, kernel_data)
 
     assert np.allclose(naive_output.data, kn2row_output.data)
 
-    im2col = Convolution2D_IM2COL(pad=pad, stride=stride)
-    im2col_output = im2col(input_data, kernel_data)
+    # im2col = Convolution2D_IM2COL(pad=pad, stride=stride, dilation=dilation)
+    # im2col_output = im2col(input_data, kernel_data)
 
-    assert np.allclose(naive_output.data, im2col_output.data)
+    # assert np.allclose(naive_output.data, im2col_output.data)
 
 
 def test_convolution2d_im2col():
@@ -54,7 +55,7 @@ def test_convolution2d_naive():
     kernel_shape = (6, 5, 3, 3)  # out_c, in_c, h, w,
     kernel_data = np.random.rand(*kernel_shape)
 
-    op = Convolution2D_Naive(pad=1, stride=1)
+    op = Convolution2D_Naive(pad=1, stride=1, dilation=2)
 
     theorical_jacobians, numerical_jacobians = check_gradients(op, (input_data, kernel_data))
     for theorical_jacobian, numerical_jacobian in zip(theorical_jacobians, numerical_jacobians):
@@ -64,5 +65,5 @@ def test_convolution2d_naive():
 
 if __name__ == '__main__':
     test_compare_convolution2d()
-    test_convolution2d_im2col()
-    test_convolution2d_naive()
+    # test_convolution2d_im2col()
+    # test_convolution2d_naive()

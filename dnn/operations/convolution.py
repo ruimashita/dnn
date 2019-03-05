@@ -58,7 +58,7 @@ def _im2col(x, kernel_h, kernel_w, stride_y, stride_x, pad_h, pad_w):
 
 class Convolution2DBase():
 
-    def __init__(self, stride=1, pad=0):
+    def __init__(self, stride=1, pad=0, dilation=1):
 
         if type(stride) is int:
             self.stride_y = stride
@@ -75,6 +75,14 @@ class Convolution2DBase():
             self.pad_h, self.pad_w = pad
         else:
             raise Exception("Expected int, tuple/list with 2 entries. Got %s." % (type(pad)))
+
+        if type(dilation) is int:
+            self.dilation_y = dilation
+            self.dilation_x = dilation
+        elif len(dilation) == 2:
+            self.dilation_y, self.dilation_x = dilation
+        else:
+            raise Exception("Expected int, tuple/list with 2 entries. Got %s." % (type(dilation)))
 
 
 class Convolution2D_IM2COL(Convolution2DBase, Operation):
@@ -134,8 +142,10 @@ class Convolution2D_Naive(Convolution2DBase, Operation):
         out_c = kernel.shape[0]
         kernel_h = kernel.shape[2]
         kernel_w = kernel.shape[3]
-        out_h = 1 + ((input_h + 2 * self.pad_h - kernel_h) // self.stride_y)
-        out_w = 1 + ((input_w + 2 * self.pad_w - kernel_w) // self.stride_x)
+        new_kernel_h = 1 + self.dilation_y * (kernel_h - 1)
+        new_kernel_w = 1 + self.dilation_x * (kernel_w - 1)
+        out_h = 1 + ((input_h + 2 * self.pad_h - new_kernel_h) // self.stride_y)
+        out_w = 1 + ((input_w + 2 * self.pad_w - new_kernel_w) // self.stride_x)
 
         y = np.empty((batch, out_c, out_h, out_w))
 
@@ -154,7 +164,11 @@ class Convolution2D_Naive(Convolution2DBase, Operation):
                 new_h = h * self.stride_y
                 new_w = w * self.stride_x
                 # partial_input.shape -> b, in_c, k_h, k_w
-                partial_input = x[:, :, new_h:new_h+kernel_h, new_w:new_w+kernel_w]
+                partial_input = x[
+                    :,
+                    :,
+                    new_h:new_h+new_kernel_h:self.dilation_y,
+                    new_w:new_w+new_kernel_w:self.dilation_x]
                 tmp = np.tensordot(partial_input, kernel, ((1, 2, 3), (1, 2, 3)))
                 y[:, :, h, w] = tmp
 
@@ -216,8 +230,10 @@ class Convolution2D_KN2ROW(Convolution2DBase, Operation):
         out_c = kernel.shape[0]
         kernel_h = kernel.shape[2]
         kernel_w = kernel.shape[3]
-        out_h = 1 + ((input_h + 2 * self.pad_h - kernel_h) // self.stride_y)
-        out_w = 1 + ((input_w + 2 * self.pad_w - kernel_w) // self.stride_x)
+        new_kernel_h = 1 + self.dilation_y * (kernel_h - 1)
+        new_kernel_w = 1 + self.dilation_x * (kernel_w - 1)
+        out_h = 1 + ((input_h + 2 * self.pad_h - new_kernel_h) // self.stride_y)
+        out_w = 1 + ((input_w + 2 * self.pad_w - new_kernel_w) // self.stride_x)
 
         # zero padding
         x = np.pad(
@@ -241,7 +257,9 @@ class Convolution2D_KN2ROW(Convolution2DBase, Operation):
                 stride_w = w * self.stride_x
                 for k_h in range(kernel_h):
                     for k_w in range(kernel_w):
-                        out[:, :, h, w] += tmp[:, stride_h+k_h, stride_w+k_w, :, k_h, k_w]
+                        dilation_k_h = k_h * self.dilation_y
+                        dilation_k_w = k_w * self.dilation_x
+                        out[:, :, h, w] += tmp[:, stride_h+dilation_k_h, stride_w+dilation_k_w, :, k_h, k_w]
 
         return out
 
@@ -249,5 +267,5 @@ class Convolution2D_KN2ROW(Convolution2DBase, Operation):
         Exception("Should be implement")
 
 
-def convolution2d(x, kernel, stride=1, pad=0):
-    return Convolution2D_IM2COL(stride=stride, pad=pad)(x, kernel)
+def convolution2d(x, kernel, stride=1, pad=0, dilation=1):
+    return Convolution2D_Naive(stride=stride, pad=pad, dilation=dilation)(x, kernel)
