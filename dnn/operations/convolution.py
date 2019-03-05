@@ -8,7 +8,7 @@ from dnn.operation import Operation
 logger = getLogger("dnn.operations.convolution")
 
 
-def col2im(col, input_h, input_w, stride_y, stride_x, pad_h, pad_w):
+def _col2im(col, input_h, input_w, stride_y, stride_x, pad_h, pad_w):
     batch, input_c, kernel_h, kernel_w, out_h, out_w = col.shape
 
     img = np.zeros((batch,
@@ -29,7 +29,7 @@ def col2im(col, input_h, input_w, stride_y, stride_x, pad_h, pad_w):
     return img
 
 
-def im2col(x, kernel_h, kernel_w, stride_y, stride_x, pad_h, pad_w):
+def _im2col(x, kernel_h, kernel_w, stride_y, stride_x, pad_h, pad_w):
     batch = x.shape[0]
     input_c = x.shape[1]
     input_h = x.shape[2]
@@ -77,7 +77,7 @@ class Convolution2DBase():
             raise Exception("Expected int, tuple/list with 2 entries. Got %s." % (type(pad)))
 
 
-class Convolution2DIM2COL(Convolution2DBase, Operation):
+class Convolution2D_IM2COL(Convolution2DBase, Operation):
 
     def forward(self, x, kernel):
         """
@@ -89,7 +89,7 @@ class Convolution2DIM2COL(Convolution2DBase, Operation):
         kernel_w = kernel.shape[3]
 
         # col.shape -> batch, input_c, kernel_h, kernel_w, out_h, out_w
-        col = im2col(x, kernel_h, kernel_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
+        col = _im2col(x, kernel_h, kernel_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
 
         # y.shape -> batch, out_h, out_w, out_c
         y = np.tensordot(
@@ -103,7 +103,7 @@ class Convolution2DIM2COL(Convolution2DBase, Operation):
 
         kernel_h = kernel.shape[2]
         kernel_w = kernel.shape[3]
-        col = im2col(x, kernel_h, kernel_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
+        col = _im2col(x, kernel_h, kernel_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
 
         # (b, out_c, out_h, out_w) * (b, in_c, k_h, k_w, out_h, out_w) -> out_c, in_c, k_h, k_w
         grad_kernel = np.tensordot(
@@ -115,12 +115,12 @@ class Convolution2DIM2COL(Convolution2DBase, Operation):
 
         input_h = x.shape[2]
         input_w = x.shape[3]
-        grad_x = col2im(grad_col, input_h, input_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
+        grad_x = _col2im(grad_col, input_h, input_w, self.stride_y, self.stride_x, self.pad_h, self.pad_w)
 
         return grad_x, grad_kernel
 
 
-class Convolution2DNaive(Convolution2DBase, Operation):
+class Convolution2D_Naive(Convolution2DBase, Operation):
 
     def forward(self, x, kernel):
         """
@@ -202,7 +202,7 @@ class Convolution2DNaive(Convolution2DBase, Operation):
         return grad_x, grad_kernel
 
 
-class Convolution2DKN2ROW(Convolution2DBase, Operation):
+class Convolution2D_KN2ROW(Convolution2DBase, Operation):
 
     def forward(self, x, kernel):
         """
@@ -246,8 +246,8 @@ class Convolution2DKN2ROW(Convolution2DBase, Operation):
         return out
 
     def backward(self, grad_outputs):
-        pass
+        Exception("Should be implement")
 
 
-def convolution2d(x, stride=1, pad=0):
-    return Convolution2DNaive(stride=stride, pad=pad)(x)
+def convolution2d(x, kernel, stride=1, pad=0):
+    return Convolution2D_IM2COL(stride=stride, pad=pad)(x, kernel)
