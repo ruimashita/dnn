@@ -3,16 +3,16 @@ import numpy as np
 
 from dnn.operations.convolution import (
     Convolution2D_IM2COL, Convolution2D_Naive,
-    Convolution2D_KN2ROW
+    Convolution2D_KN2ROW, Convolution2D_KN2COL,
 )
 from dnn.test import check_gradients
 
 
 def test_compare_convolution2d():
-    input_shape = (2, 2, 20, 20)  # b, c, h, w
+    input_shape = (1, 32, 20, 20)  # b, c, h, w
     input_data = np.random.rand(*input_shape)
 
-    kernel_shape = (4, 2, 3, 3)  # out_c, in_c, h, w,
+    kernel_shape = (64, 32, 3, 3)  # out_c, in_c, h, w,
     kernel_data = np.random.rand(*kernel_shape)
 
     pad = 1
@@ -25,6 +25,11 @@ def test_compare_convolution2d():
     kn2row_output = kn2row(input_data, kernel_data)
 
     assert np.allclose(naive_output.data, kn2row_output.data)
+
+    kn2col = Convolution2D_KN2COL(pad=pad, stride=stride)
+    kn2col_output = kn2col(input_data, kernel_data)
+
+    assert np.allclose(naive_output.data, kn2col_output.data)
 
     im2col = Convolution2D_IM2COL(pad=pad, stride=stride)
     im2col_output = im2col(input_data, kernel_data)
