@@ -1,11 +1,11 @@
 -r test.requirements.txt
 
 # docs
-Sphinx==1.6.1
-sphinx-rtd-theme==0.2.4
-recommonmark==0.4.0
+Sphinx==4.4.0
+sphinx-rtd-theme==1.0.0
+recommonmark==0.7.1
 
 # development
 Pillow==4.1.1
-colorlog==2.10.0
-ipdb==0.10.3
+colorlog==6.6.0
+ipdb==0.13.9

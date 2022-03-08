@@ -1,15 +1,6 @@
-FROM buildpack-deps:xenial
+FROM buildpack-deps:focal
 
 MAINTAINER takuya.wakisaka@moldweorp.com
-
-RUN echo "deb http://ftp.jaist.ac.jp/ubuntu/ xenial main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial main restricted universe multiverse \n\
-deb http://ftp.jaist.ac.jp/ubuntu/ xenial-updates main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial-updates main restricted universe multiverse \n\
-deb http://ftp.jaist.ac.jp/ubuntu/ xenial-backports main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial-backports main restricted universe multiverse \n\
-deb http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse \n\
-deb-src http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -22,9 +13,8 @@ RUN apt-get update && apt-get install -y \
 
 # alias python=python3
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
 
-RUN pip install -U pip setuptools
+RUN pip3 install -U pip setuptools
 
 # develop
 RUN apt-get update && apt-get install -y \
@@ -35,8 +25,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY test.requirements.txt /tmp/test.requirements.txt
 COPY develop.requirements.txt /tmp/develop.requirements.txt
-RUN pip install -r /tmp/develop.requirements.txt
+RUN pip3 install -r /tmp/develop.requirements.txt
 
 COPY ./ /home
 WORKDIR /home
-RUN pip install -e .
+RUN pip3 install -e .

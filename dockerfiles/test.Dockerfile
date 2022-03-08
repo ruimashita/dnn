@@ -1,15 +1,6 @@
-FROM buildpack-deps:xenial
+FROM buildpack-deps:focal
 
 MAINTAINER takuya.wakisaka@moldweorp.com
-
-RUN echo "deb http://ftp.jaist.ac.jp/ubuntu/ xenial main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial main restricted universe multiverse \n\
-deb http://ftp.jaist.ac.jp/ubuntu/ xenial-updates main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial-updates main restricted universe multiverse \n\
-deb http://ftp.jaist.ac.jp/ubuntu/ xenial-backports main restricted universe multiverse \n\
-deb-src http://ftp.jaist.ac.jp/ubuntu/ xenial-backports main restricted universe multiverse \n\
-deb http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse \n\
-deb-src http://security.ubuntu.com/ubuntu xenial-security main restricted universe multiverse" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -23,14 +14,13 @@ RUN apt-get update && apt-get install -y \
 
 ENV PYENV_ROOT $HOME/.pyenv
 ENV PATH $HOME/.pyenv/shims:$HOME/.pyenv/bin:$PATH
-ENV PYTHON_VERSIONS 3.5.2 3.6.1
+ENV PYTHON_VERSIONS 3.9.10 3.10.2
 
 # alias python=python3
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-RUN ln -s /usr/bin/pip3 /usr/bin/pip
 
-RUN pip install -U pip setuptools
-RUN pip install tox
+RUN pip3 install -U pip setuptools
+RUN pip3 install tox
 
 # pyenv
 RUN curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
