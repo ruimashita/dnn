@@ -9,7 +9,7 @@ Automatic differentiation deep neural network framework.
 
 ## Getting Started
 
-python >= 3.5.
+python >= 3.8.
 
 ### Installing
 

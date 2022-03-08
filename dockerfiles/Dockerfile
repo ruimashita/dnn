@@ -1,4 +1,4 @@
-FROM buildpack-deps:xenial
+FROM buildpack-deps:focal
 
 MAINTAINER takuya.wakisaka@moldweorp.com
 

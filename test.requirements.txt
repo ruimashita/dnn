@@ -1,8 +1,9 @@
 # test
-tensorflow==1.1.0
-pytest==3.0.7
-pytest-cov==2.5.1
-flake8==3.3.0
-tox==2.7.0
+# TODO: decide tf version & update test.
+# tensorflow
+pytest==7.0.1
+pytest-cov==3.0.0
+flake8==4.0.1
+tox==3.24.5
 codecov
 codeclimate-test-reporter
